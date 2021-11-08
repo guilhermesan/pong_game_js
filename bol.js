@@ -8,6 +8,7 @@ class Bol {
     maxX
     maxY
     radio = 20;
+    speed = 10
 
     onLoseRight = () => {}
     onLoseLeft = () => {}
@@ -25,13 +26,16 @@ class Bol {
     }
 
     verifyCollision(racketLeft, racketRight){
-        if ((racketLeft.x + racketLeft.width) >= this.x){
+
+        let racketLeftX = racketLeft.x + racketLeft.width
+
+        if (racketLeftX >= this.x && Math.abs(this.x - racketLeftX) < 10){
             if (this.y >= racketLeft.y && this.y <= racketLeft.y + racketLeft.height){
                 this.changeDirection(); 
-                }    
+            }    
         }
 
-        if (racketRight.x <= this.x){
+        if (racketRight.x <= this.x && Math.abs(racketRight.x - this.x) < 10){
             if (this.y >= racketRight.y && this.y <= racketRight.y + racketRight.height){
                 this.changeDirection(); 
             }    
@@ -39,7 +43,8 @@ class Bol {
         
     }
 
-    update(speed){
+    update(){
+        let speed = this.speed;
         this.x += (this.directionX * speed);
         this.y += (this.directionY * speed);
 
@@ -57,6 +62,7 @@ class Bol {
     }
 
     changeDirection(){
+        this.speed *= 1.01;
         this.directionX = this.directionX* -1; 
         this.directionY = ((Math.random()*2)-1)*0.5;
     }

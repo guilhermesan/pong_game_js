@@ -42,8 +42,6 @@ class Game {
     update() {
         this.ctx.clearRect(0, 0, this.width, this.height);
     
-        
-
         this.bol.draw(this.ctx);
         this.rLeft.draw(this.ctx);
         this.rRight.draw(this.ctx)
@@ -73,7 +71,7 @@ class Game {
         this.ctx.fillText(`Player 1 - ${this.pointsRight}`, this.width-10, 10);
 
         if (this.currentCountDown <= 0){
-            this.bol.update(10);
+            this.bol.update();
             this.rLeft.update(this.touchedKeys);
             this.rRight.update(this.touchedKeys);
 
