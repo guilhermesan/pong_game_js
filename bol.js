@@ -29,13 +29,13 @@ class Bol {
 
         let racketLeftX = racketLeft.x + racketLeft.width
 
-        if (racketLeftX >= this.x && Math.abs(this.x - racketLeftX) < 10){
+        if (racketLeftX >= this.x && Math.abs(this.x - racketLeftX) < this.speed){
             if (this.y >= racketLeft.y && this.y <= racketLeft.y + racketLeft.height){
                 this.changeDirection(); 
             }    
         }
 
-        if (racketRight.x <= this.x && Math.abs(racketRight.x - this.x) < 10){
+        if (racketRight.x <= this.x && Math.abs(racketRight.x - this.x) < this.speed){
             if (this.y >= racketRight.y && this.y <= racketRight.y + racketRight.height){
                 this.changeDirection(); 
             }    

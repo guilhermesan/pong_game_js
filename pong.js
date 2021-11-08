@@ -20,6 +20,10 @@ class Game {
     pointsLeft = 0;
     pointsRight = 0;
 
+    pointsToWin = 5;
+
+    winner = null;
+
     constructor(ctx, width, height){
         this.ctx = ctx;
         this.width = width;
@@ -51,14 +55,19 @@ class Game {
         this.ctx.rect(0, 0, this.width, this.height);
         this.ctx.stroke();
 
-        //Draw mid line
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.width/2, 0)
-        this.ctx.lineTo(this.width/2, this.height)
-        this.ctx.stroke();
+        
 
         this.ctx.font = "40px Arial";
         this.ctx.fillStyle = "black";
+
+        if (this.winner != null) {
+            this.ctx.beginPath();
+            this.ctx.textBaseline = "top"
+            this.ctx.textAlign = "center";
+            this.ctx.fillText(this.winner + " Venceu", this.width/2, this.height/2);
+            this.ctx.fillText("Pressione enter para jogar denovo", this.width/2, this.height*0.75);
+        }
+        
 
         this.ctx.beginPath();
         this.ctx.textBaseline = "top"
@@ -70,7 +79,14 @@ class Game {
         this.ctx.textAlign = "right";
         this.ctx.fillText(`Player 1 - ${this.pointsRight}`, this.width-10, 10);
 
-        if (this.currentCountDown <= 0){
+        if (this.running){
+
+            //Draw mid line
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.width/2, 0)
+            this.ctx.lineTo(this.width/2, this.height)
+            this.ctx.stroke();
+
             this.bol.update();
             this.rLeft.update(this.touchedKeys);
             this.rRight.update(this.touchedKeys);
@@ -81,18 +97,38 @@ class Game {
 
             this.bol.verifyCollision(this.rLeft, this.rRight);
         } else {
-            this.ctx.save();
-            this.ctx.translate(this.width/2, this.height*0.2);
-            this.ctx.beginPath();
-            this.ctx.font = "70px Arial";
-            this.ctx.fillStyle = "black";
-            this.ctx.textAlign = "center";
-            this.ctx.fillText(this.currentCountDown, 0, 0);
-            this.ctx.restore();
+            if (this.winner == null){
+                this.ctx.save();
+                this.ctx.translate(this.width/2, this.height*0.2);
+                this.ctx.beginPath();
+                this.ctx.font = "70px Arial";
+                this.ctx.fillStyle = "black";
+                this.ctx.textAlign = "center";
+                this.ctx.fillText(this.currentCountDown, 0, 0);
+                this.ctx.restore();
+            } 
         }
     }
 
+    verifyWinner(){
+        if (this.pointsRight >= this.pointsToWin){
+            this.running = false;
+            this.winner = "Player 1";
+            this.update();
+            return true;
+        } 
+        if (this.pointsLeft >= this.pointsToWin){
+            this.running = false;
+            this.winner = "Player 2";
+            this.update();
+            return true;
+        }
+        return false
+    }
+
     init(){
+        this.winner = null;
+        this.running = false;
         let racketHeight = this.height*0.2;
         let racketWidth = this.width*0.03;
 
@@ -102,11 +138,15 @@ class Game {
         this.bol = new Bol(this.ctx, this.width/2, this.height/2, this.width, this.height);
         this.bol.onLoseRight = () => {
             this.pointsLeft++;
-            this.init();
+            if (!this.verifyWinner()){
+                this.init();
+            }
         }
         this.bol.onLoseLeft = () => {
             this.pointsRight++;
-            this.init();
+            if (!this.verifyWinner()){
+                this.init();
+            }
         }
         this.currentCountDown = 3;
         this.update();
@@ -118,11 +158,12 @@ class Game {
             if (this.currentCountDown > 0){
                 console.log(this.currentCountDown);
                 this.currentCountDown--;
-                this.update();
                 if (this.currentCountDown > 0 ){
                     this.handleCountDown();
+                } else {
+                    this.running = true;
                 }
-                
+                this.update();
             }
         }, 1000); 
     }
@@ -135,15 +176,29 @@ class Game {
     }
 
     handleUp(e) {
+        if (e.code == "Enter"){
+            return;
+        }
         console.log(`up ${e.code}`);
         this.removeKey(e) 
     }
 
     removeKey(e){
+        if (e.code == "Enter"){
+            this.restart();
+            return;
+        }
         let index = this.touchedKeys.indexOf(e.code)
         if (index >= 0) {
             this.touchedKeys.splice(index, 1);
         }
+    }
+
+
+    restart(){
+        this.pointsLeft = 0;
+        this.pointsRight = 0;
+        this.init();
     }
 
 }
