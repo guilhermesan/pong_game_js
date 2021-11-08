@@ -41,12 +41,36 @@ class Game {
 
     update() {
         this.ctx.clearRect(0, 0, this.width, this.height);
+    
+        
+
         this.bol.draw(this.ctx);
         this.rLeft.draw(this.ctx);
         this.rRight.draw(this.ctx)
+
+        //Draw square field
         this.ctx.beginPath();
         this.ctx.rect(0, 0, this.width, this.height);
         this.ctx.stroke();
+
+        //Draw mid line
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.width/2, 0)
+        this.ctx.lineTo(this.width/2, this.height)
+        this.ctx.stroke();
+
+        this.ctx.font = "40px Arial";
+        this.ctx.fillStyle = "black";
+
+        this.ctx.beginPath();
+        this.ctx.textBaseline = "top"
+        this.ctx.textAlign = "left";
+        this.ctx.fillText(`Player 2 - ${this.pointsLeft}`, 10, 10);
+
+        this.ctx.beginPath();
+        this.ctx.textBaseline = "top"
+        this.ctx.textAlign = "right";
+        this.ctx.fillText(`Player 1 - ${this.pointsRight}`, this.width-10, 10);
 
         if (this.currentCountDown <= 0){
             this.bol.update(10);
@@ -79,9 +103,11 @@ class Game {
 
         this.bol = new Bol(this.ctx, this.width/2, this.height/2, this.width, this.height);
         this.bol.onLoseRight = () => {
+            this.pointsLeft++;
             this.init();
         }
         this.bol.onLoseLeft = () => {
+            this.pointsRight++;
             this.init();
         }
         this.currentCountDown = 3;
