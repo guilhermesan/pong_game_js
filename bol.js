@@ -8,6 +8,9 @@ class Bol {
     maxX
     maxY
     radio = 20;
+
+    onLoseRight = () => {}
+    onLoseLeft = () => {}
     
     constructor(ctx, x, y, maxX, maxY){
         this.ctx = ctx;
@@ -40,8 +43,11 @@ class Bol {
         this.x += (this.directionX * speed);
         this.y += (this.directionY * speed);
 
-        if (this.x <= 0 || this.x >= this.maxX){
-            this.changeDirection();
+        if (this.x <= (this.radio*-2)) {
+            this.onLoseLeft();
+        }
+        if (this.x >= this.maxX) {
+            this.onLoseRight();
         }
 
         if ((this.y <= 0 && this.directionY < 0) || (this.y >= this.maxY &&this.directionY > 0)){
